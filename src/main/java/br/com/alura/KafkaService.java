@@ -4,12 +4,13 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.io.Closeable;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.UUID;
 
-class KafkaService {
+class KafkaService implements Closeable {
     private final KafkaConsumer<String, String> consumer;
     private final ConsumerFunction parse;
 
@@ -42,5 +43,10 @@ class KafkaService {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId); //um consumer tem que estar em um grupo, aqui crio o grupo com o nome desta classe e coloco este consumer dentro.
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
         return properties;
+    }
+
+    @Override
+    public void close() {
+        consumer.close();
     }
 }
